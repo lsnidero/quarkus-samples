@@ -1,0 +1,23 @@
+{
+  "namespace": "me.lsnidero.quarkus",
+  "type": "record",
+  "name": "Movie",
+  "fields": [
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "year",
+      "type": "int"
+    },
+    {
+      "name": "imdb_rate",
+      "type": "int"
+    },
+    {
+    "name": "rotten_tomatoes_rate",
+    "type": "int"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+  zookeeper:
+    image: strimzi/kafka:0.19.0-kafka-2.5.0
+    command: [
+        "sh", "-c",
+        "bin/zookeeper-server-start.sh config/zookeeper.properties"
+    ]
+    ports:
+      - "2181:2181"
+    healthcheck:
+      test: nc -z localhost 2181 || exit 1
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    environment:
+      LOG_DIR: /tmp/logs
+
+  kafka:
+    image: strimzi/kafka:0.19.0-kafka-2.5.0
+    command: [
+        "sh", "-c",
+        "bin/kafka-server-start.sh config/server.properties --override advertised.listeners=$${KAFKA_ADVERTISED_LISTENERS} --override zookeeper.connect=$${KAFKA_ZOOKEEPER_CONNECT} --override listeners=$${KAFKA_LISTENERS}"
+    ]
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - 9092:9092
+    healthcheck:
+      test: nc -z localhost 9092 || exit 1
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    environment:
+      LOG_DIR: "/tmp/logs"
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+#  kafka-ui:
+#    image: provectuslabs/kafka-ui:latest
+#    depends_on:
+#      kafka:
+#        condition: service_healthy
+#    ports:
+#      - "8082:8082"
+#    restart: always
+#    environment:
+#      SERVER_PORT: 8082
+#      KAFKA_CLUSTERS_0_NAME: local
+#      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+
+  schema-registry:
+    image: apicurio/apicurio-registry-mem:2.3.1.Final
+    ports:
+      - "8081:8080"
+    environment:
+      QUARKUS_PROFILE: prod
+    
