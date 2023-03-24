@@ -1,15 +1,14 @@
 package me.lsnidero;
 
+import io.quarkus.logging.Log;
 import me.lsnidero.quarkus.Movie;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
-import org.jboss.logging.Logger;
+
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -18,7 +17,9 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class MovieResource {
 
-    private static final Logger LOGGER = Logger.getLogger("MovieResource");
+    @Inject
+    ApplicationService applicationService;
+
 
     @Inject
     @Channel("movies")
@@ -26,9 +27,18 @@ public class MovieResource {
 
     @POST
     public Response enqueueMovie(Movie movie) {
-        LOGGER.infof("Sending movie %s to Kafka", movie.getTitle());
+        Log.infof("Sending movie %s to Kafka", movie.getTitle());
         emitter.send(movie);
         return Response.accepted().build();
+    }
+
+    @GET
+    @Path("/test")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String justForTracing() {
+        Log.info("Let's trace");
+        String some = applicationService.getSome();
+        return "{\"this\": \"" + some + "\"}";
     }
 
 }
