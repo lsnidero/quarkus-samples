@@ -2,6 +2,7 @@ package me.lsnidero;
 
 import me.lsnidero.entity.LocalMovie;
 import io.smallrye.mutiny.Uni;
+import me.lsnidero.entity.NoSqlMovie;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -16,10 +17,18 @@ import java.util.List;
 public class MovieResource {
 
     @GET
-    public Uni<List<LocalMovie>> get() {
+    @Path("/sql")
+    public Uni<List<LocalMovie>> getSQL() {
         return LocalMovie.listAll();
     }
 
-      ;
+    @GET
+    @Path("/nosql")
+    public List<NoSqlMovie> getNoSQL(){
+        return NoSqlMovie.listAll();
+    }
+
+
+
 
 }

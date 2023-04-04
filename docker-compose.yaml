@@ -55,7 +55,8 @@ services:
 #      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
 
   schema-registry:
-    image: apicurio/apicurio-registry-mem:2.3.1.Final
+#    image: apicurio/apicurio-registry-mem:2.3.1.Final
+    image: apicurio/apicurio-registry-mem:2.0.2.Final
     ports:
       - "8081:8080"
     environment:
@@ -70,3 +71,7 @@ services:
     environment:
       COLLECTOR_OTLP_ENABLED: true
 
+  mongo:
+    image: mongo:4.0.10
+    ports:
+      - "27017:27017" 

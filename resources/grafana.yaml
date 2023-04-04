@@ -1,0 +1,12 @@
+apiVersion: integreatly.org/v1alpha1
+kind: Grafana
+metadata:
+  name: example
+  namespace: lsnidero-test
+spec:
+  config:
+    auth:
+      disable_login_form: false
+    security:
+      admin_password: password
+      admin_user: admin
